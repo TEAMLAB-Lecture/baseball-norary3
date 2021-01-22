@@ -31,7 +31,7 @@ def is_digit(user_input_number):
     # '''
     # ===Modify codes below=============
     # 조건에 따라 변환되어야 할 결과를 result 변수에 할당
-    result = user_input_number.isdigit()
+    result = user_input_number.isdecimal()
 
     # ==================================
     return result
@@ -88,11 +88,14 @@ def is_duplicated_number(three_digit):
     # ===Modify codes below=============
     # 조건에 따라 변환되어야 할 결과를 result 변수에 할당
 
-    result = False
-    digits = str(three_digit)
-    for digit in digits :
-        if digits.count(digit) > 1 :
-            result = True
+    # result = False
+    # digits = str(three_digit)
+    # for digit in digits :
+    #     if digits.count(digit) > 1 :
+    #         result = True
+
+    digits = set(str(three_digit))
+    result = not ( len(digits) == 3 )
     
     # ==================================
     return result
@@ -125,7 +128,9 @@ def is_validated_number(user_input_number):
     # print('is_between_100_and_999?', is_between_100_and_999(user_input_number))
     # print('is_duplicated_number?', is_duplicated_number(user_input_number))
     input_number = str(user_input_number)
-    result = is_digit(input_number) and is_between_100_and_999(input_number) and not(is_duplicated_number(input_number))
+    result = is_digit(input_number)\
+         and is_between_100_and_999(input_number)\
+              and not(is_duplicated_number(input_number))
     # ==================================
     return result
 
@@ -189,15 +194,10 @@ def get_strikes_or_ball(user_input_number, random_number):
     strikes = 0
     balls = 0
 
-
     for i in range(0,3) :
-        try :
-            if user_input_number[i] in random_number :
-                if user_input_number[i] == random_number[i] : strikes += 1
-                else : balls += 1
-        except :
-            print('user ', user_input_number)
-            print('rnd ', random_number)
+        if user_input_number[i] in random_number :
+            if user_input_number[i] == random_number[i] : strikes += 1
+            else : balls += 1
 
     result = [strikes, balls]
     # ==================================
@@ -280,33 +280,61 @@ def main():
         
         while user_input :
             user_input = input('Input guess number : ')
-            while not(is_validated_number(user_input)) :
-                if user_input == '0' : 
-                    user_input == ''
-                    one_more = False
+
+            if user_input == '0' :
+                one_more = False
+                break
+
+            if not(is_validated_number(user_input)) :
+                print('Wrong Input, Input Again')
+                continue
+            
+            score = get_strikes_or_ball(user_input, random_number)
+            print('Strikes :', score[0], 'Balls :', score[1])
+
+            while score[0] == 3 :
+                is_continue = input('You win, one more (Y/N) ?')
+                if not( is_yes(is_continue) or is_no(is_continue)) :
+                    print('Wrong Input, Input Again')
+                    continue
+                if is_yes(is_continue):
+                    one_more = True
+                    user_input = ''
                     break
                 else :
-                    if not(is_validated_number(user_input)) : 
-                        print("Wrong Input, Input Again")
-                        user_input = input()
-            else :
-                score = get_strikes_or_ball(user_input, random_number)
-                print('Strikes :', score[0], 'Balls :', score[1])
-                if score[0] == 3 :
-                    is_continue = input('You win, one more (Y/N) ?')
-                    while not( is_yes(is_continue) or is_no(is_continue)) :
-                        print('Wrong Input, Input Again')
-                        is_continue = input()
-                    if is_yes(is_continue):
-                        user_input = ''
-                        continue
-                    else : break
-                else :
-                    continue
-            break
-        else:
-            continue
-        break
+                    one_more = False
+                    user_input = ''
+                    break
+        
+        # while user_input :
+        #     user_input = input('Input guess number : ')
+        #     while not(is_validated_number(user_input)) :
+        #         if user_input == '0' : 
+        #             user_input == ''
+        #             one_more = False
+        #             break
+        #         else :
+        #             if not(is_validated_number(user_input)) : 
+        #                 print("Wrong Input, Input Again")
+        #                 user_input = input('Input guess number : ')
+        #     else :
+        #         score = get_strikes_or_ball(user_input, random_number)
+        #         print('Strikes :', score[0], 'Balls :', score[1])
+        #         if score[0] == 3 :
+        #             is_continue = input('You win, one more (Y/N) ?')
+        #             while not( is_yes(is_continue) or is_no(is_continue)) :
+        #                 print('Wrong Input, Input Again')
+        #                 is_continue = input('You win, one more (Y/N) ?')
+        #             if is_yes(is_continue):
+        #                 user_input = ''
+        #                 continue
+        #             else : break
+        #         else :
+        #             continue
+        #     break
+        # else:
+        #     continue
+        # break
 
     # ==================================
     print("Thank you for using this program")
